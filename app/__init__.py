@@ -2,12 +2,12 @@ from urllib import response
 from flask import Flask, render_template, request,redirect, url_for, jsonify
 # from mvc_flask import FlaskMVC
 # import sys  
-# from .models import Session,engine,Noticias
+from .models import Session,engine,Noticias
 # import sqlalchemy
 # from datetime import datetime
 # from sqlalchemy.ext.declarative import declarative_base
 
-app = Flask(__name__)
+# app = Flask(__name__)
 # FlaskMVC(app)
 
 @app.route("/")
@@ -24,32 +24,31 @@ def calcular():
     # if request.method == "GET":
     #     return render_template('cadastrar.html')
     # else:
-
-        #  session = Session()
-        #  pacer = notas(p= request.form['p'], 
-        #  a=request.form['a'],
-        #  c= request.form['c'],
-        #  er =  request.form['er'])
+    novoPacer = session.query(usuariopacer)
     data = request.get_json()
-    p = data['p']
-    a = data['a']
-    c = data['c']
-    er = data['er']
-         
-        #  session.add(pacer)
-        #  session.commit()
+    novoPacer.notaP = data['p']
+    novoPacer.notaA = data['a']
+    novoPacer.notaC = data['c']
+    novoPacer.notaER = data['er']
+    novoPacer.usuario = data['usuario']
+    novoPacer.usuarioAvaliado = data['usuarioAvaliado']
+    novoPacer.idSprint = data['idSprint']
+   
+    session.add(novoPacer)
+    session.commit()
          
         #  return render_template('visualizar.html',noticia=noticia)
-    return jsonify({'result':'deu certo', 'p': p,'a': a,'c': c,'er': er})
+    return jsonify({'result':'deu certo', 'p': notaP,'a': notaA,'c': notaC,'er': notaER})
 
 # @app.route("/calculo", methods = ['POST'])
 # def calcular():
-    
 
 #     data = request.get_json()
 
+#     notaASerCalculadaP = session.query(usuariopacer).filter_by(usuarioAvaliado = data['noticia'],
+#                                                               idSprint = data['idSprint'])
 
-#     qtdnotasP = select count(notasSprintP) where etapa = 1 
+#     qtdnotasP = 
 #     totalp = Sum(notasSprintP) / qtdnotasp
 
 #         qtdnotasA = select count(notasSprintA) where etapa = 1 
