@@ -1,16 +1,8 @@
-from ast import If
-from pickle import GET
 from urllib import response
-from flask import Flask, render_template, request,redirect, url_for
-from mvc_flask import FlaskMVC
-import sys  
-from .models import Session,engine,Noticias
-import sqlalchemy
-from datetime import datetime
-from sqlalchemy.ext.declarative import declarative_base
+from flask import Flask, render_template, request,redirect, url_for, jsonify
+from .models import Session,engine, UsuarioPacer
 
 app = Flask(__name__)
-FlaskMVC(app)
 
 @app.route("/")
 def index():
@@ -19,18 +11,48 @@ if __name__ == '__main__':
     app.debug = True
     app.run()
 
-@app.route("/calculo")
+@app.route("/cadastrarNotas",methods = ['POST'])
 def calcular():
-    qtdnotasP = select count(notasSprintP) where etapa = 1 
-    totalp = Sum(notasSprintP) / qtdnotasp
+    app.run()
+    session = Session()
 
-        qtdnotasA = select count(notasSprintA) where etapa = 1 
-    totalA = Sum(notasSprintA) / qtdnotasA
+    # if request.method == "GET":
+    #     return render_template('cadastrar.html')
+    # else:
+    data = request.get_json()
+    novoPacer = UsuarioPacer(
+    NotaP = data['notaP'],
+    NotaA = data['notaA'],
+    NotaC = data['notaC'],
+    NotaER = data['notaER'],
+    IdUsuario = data['usuario'],
+    IdUsuarioAvaliado = data['usuarioAvaliado'],
+    IdSprint = data['idSprint']
+    )
+   
+    session.add(novoPacer)
+    session.commit()
+         
+    return jsonify({'result':'deu certo'})
 
-        qtdnotasC = select count(notasSprintC) where etapa = 1 
-    totalC = Sum(notasSprintC) / qtdnotasC
+# @app.route("/calculo", methods = ['POST'])
+# def calcular():
 
-        qtdnotasER = select count(notasSprintER) where etapa = 1 
-    totalER = Sum(notasSprintER) / qtdnotasER
-    
-    return render_template('tela_exibicao')
+#     data = request.get_json()
+
+#     notaASerCalculadaP = session.query(usuariopacer).filter_by(usuarioAvaliado = data['noticia'],
+#                                                               idSprint = data['idSprint'])
+
+#     qtdnotasP = 
+#     totalp = Sum(notasSprintP) / qtdnotasp
+
+#         qtdnotasA = select count(notasSprintA) where etapa = 1 
+#     totalA = Sum(notasSprintA) / qtdnotasA
+
+#         qtdnotasC = select count(notasSprintC) where etapa = 1 
+#     totalC = Sum(notasSprintC) / qtdnotasC
+
+#         qtdnotasER = select count(notasSprintER) where etapa = 1 
+#     totalER = Sum(notasSprintER) / qtdnotasER
+
+#     return render_template('tela_exibicao')
