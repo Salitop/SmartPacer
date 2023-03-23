@@ -36,9 +36,18 @@ Com as devidas credenciais de aluno e professor cadastradas, existirá duas tela
 ![ajuste dados](https://github.com/Salitop/SmartPacer-UI/blob/main/imagens/gestao%20turmas%20e%20alunos%20-%20professor.PNG)
 
 
+## Modelo Banco de Dados ##
+
+![modelo banco](https://github.com/Salitop/SmartPacer-UI/blob/main/imagens/modelo%20banco%20de%20dados.PNG)
+
+## Entregas 📋 ##
+
+* 1° Sprint: 13/03 a 02/04
+
+
 ## Integrantes 👧👦 ##
-* Ana Clara Ferreira de Godoy 
-* Edryan Matheus dos Santos Maciel
-* Israel Augusto 
-* Luiz Miguel Macedo Andre
- * Pedro Sousa Lopes 
+* Ana Clara Ferreira de Godoy (Product Owner)
+*  Luiz Miguel Macedo Andre (Master)
+* Edryan Matheus dos Santos Maciel (Dev Team)
+* Israel Augusto (Dev Team)
+* Pedro Sousa Lopes (Dev Team)
