@@ -56,6 +56,8 @@ def login():
     if usuario:
         if usuario.senha == usuarioSenha:
             return "Login bem sucedido"
+    
+    return jsonify({'result':'deu certo'})
 
 
 # @app.route("/calculo", methods = ['POST'])
