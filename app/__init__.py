@@ -1,8 +1,13 @@
 from urllib import response
 from flask import Flask, render_template, request,redirect, url_for, jsonify
+from flask_bcrypt import Bcrypt ## modulo para encriptar as senhas dos usuarios
+
 from .models import Session,engine, UsuarioPacer
 
+
 app = Flask(__name__)
+
+bcrypt = Bcrypt(app)
 
 @app.route("/")
 def index():
@@ -34,6 +39,24 @@ def calcular():
     session.commit()
          
     return jsonify({'result':'deu certo'})
+
+
+## rota para login
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    app.run()
+    
+    data = request.get_json()
+    ## obtem nome e senha inseridos no formulario
+    ## faz a busca na yabela Usuario pelo nome
+    ## compara a senha inserida com a senha no banco
+    usuarioNome = data['nome']
+    usuarioSenha = data['senha']
+    usuario = Usuario.query.filter_by(nome=usuarioNome).first()
+    if usuario:
+        if usuario.senha == usuarioSenha:
+            return "Login bem sucedido"
+
 
 # @app.route("/calculo", methods = ['POST'])
 # def calcular():
