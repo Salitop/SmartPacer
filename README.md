@@ -24,12 +24,12 @@ Com as devidas credenciais de aluno e professor cadastradas, existirá duas tela
 ![prof inicio](https://github.com/Salitop/SmartPacer-UI/blob/main/imagens/inicio%20professor.PNG)
 
 
-*Na tela de aluno será realizado o cadastramento das notas PACER de sua equipe*
+*Como aluno, posso cadastrar minhas notas do Pacer em determinada sprint selecionada
 
 ![tela aluno](https://github.com/Salitop/SmartPacer-UI/blob/main/imagens/cadastrar%20pacer.PNG)
 
 
-*Na tela do professor será possivel visualizar as notas cadastradas e realizar ajuste de turmas e alunos*
+*Como professor, posso cadastrar, excluir e atualizar dados dos alunos e obter as notas do Pacer de cada equipe e Sprint correspondente
 
 ![visualizar pacer](https://github.com/Salitop/SmartPacer-UI/blob/main/imagens/visualiza%C3%A7%C3%A3o%20pacer%20-%20professor.PNG)
 
