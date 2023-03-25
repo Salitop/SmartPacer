@@ -1,8 +1,12 @@
 from urllib import response
 from flask import Flask, render_template, request,redirect, url_for, jsonify
-from .models import Session,engine, UsuarioPacer
+from .models import Session,engine, UsuarioPacer, Sprint
 
 app = Flask(__name__)
+
+if __name__ == '__main__':
+    app.debug = True
+    app.run()
 
 @app.route("/")
 def index():
@@ -56,3 +60,18 @@ def calcular():
 #     totalER = Sum(notasSprintER) / qtdnotasER
 
 #     return render_template('tela_exibicao')
+
+@app.route("/obterTodasSprints",methods = ['GET'])
+def obterTodasSprints():
+    session = Session()
+    sprints =  session.query(Sprint).filter_by(Ativo = 1).all()
+    
+    todas_sprints = [{'idsprint':sprint.IdSprint,'ano':sprint.Ano,'semestre':sprint.Semestre,'descricao':sprint.Descricao} for sprint in sprints]
+         
+    return jsonify(todas_sprints)
+
+    #  IdSprint = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, nullable=False)
+    # Ano = sqlalchemy.Column(sqlalchemy.SmallInteger, nullable=False)
+    # Semestre = sqlalchemy.Column(sqlalchemy.SmallInteger, nullable=False)
+    # Descricao = sqlalchemy.Column(sqlalchemy.String(20))
+    # Ativo = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False)
