@@ -1,6 +1,6 @@
 from urllib import response
 from flask import Flask, render_template, request,redirect, url_for, jsonify
-from .models import Session,engine, UsuarioPacer, Sprint
+from .models import *
 
 app = Flask(__name__)
 
@@ -61,6 +61,26 @@ def calcular():
 
 #     return render_template('tela_exibicao')
 
+@app.route("/obterSprintSemestreAno",methods = ['GET'])
+def obterSprintSemestreAno():
+    data = request.get_json()
+
+    session = Session()
+    sprintsFiltradas =  session.query(Sprint).filter_by(Semestre = data['semestre'], Ano = data['ano']).all()
+    
+    todas_sprints = [{'idsprint':sprintFiltrada.IdSprint,'ano':sprintFiltrada.Ano,'semestre':sprintFiltrada.Semestre,'descricao':sprintFiltrada.Descricao} for sprintFiltrada in sprintsFiltradas]
+         
+    return jsonify(todas_sprints)
+
+@app.route("/obterTodasEquipes",methods = ['GET'])
+def obterTodasEquipes():
+    session = Session()
+    equipes =  session.query(Equipe).all()
+    
+    todas_equipes = [{'idequipe':equipe.IdEquipe,'equipe':equipe.NomeEquipe} for equipe in equipes]
+         
+    return jsonify(todas_equipes)
+
 @app.route("/obterTodasSprints",methods = ['GET'])
 def obterTodasSprints():
     session = Session()
@@ -70,8 +90,20 @@ def obterTodasSprints():
          
     return jsonify(todas_sprints)
 
-    #  IdSprint = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, nullable=False)
-    # Ano = sqlalchemy.Column(sqlalchemy.SmallInteger, nullable=False)
-    # Semestre = sqlalchemy.Column(sqlalchemy.SmallInteger, nullable=False)
-    # Descricao = sqlalchemy.Column(sqlalchemy.String(20))
-    # Ativo = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False)
+#me enviara o idequipe e idsprint, devo retornar os alunos e suas notas
+
+@app.route("/visualizarNotasEquipeSprint",methods = ['GET'])
+def visualizarNotasEquipeSprint():
+    data = request.get_json()
+    session = Session()
+    filtro = session.query(UsuarioPacer,UsuarioEquipe,Usuario)\
+    .join(Usuario, UsuarioPacer.IdUsuarioAvaliado == Usuario.IdUsuario)\
+    .join(UsuarioEquipe, Usuario.IdUsuario == UsuarioEquipe.UsuarioId)\
+    .filter(UsuarioPacer.IdSprint == data['idsprint'], UsuarioEquipe.EquipeId == data['idequipe'])\
+    .all()
+    # filtroEquipeSprint =  session.query(EquipeSprint).filter_by(IdEquipe = data['idequipe'], IdSprint = data['idsprint']).all()
+    
+    # return print(filtro)
+    todas_sprints = [{'nomealuno':aluno.Usuario.Nome} for aluno in filtro]
+         
+    return jsonify(todas_sprints)
