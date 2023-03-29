@@ -41,23 +41,7 @@ def calcular():
     return jsonify({'result':'deu certo'})
 
 
-## rota para login
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    app.run()
-    
-    data = request.get_json()
-    ## obtem nome e senha inseridos no formulario
-    ## faz a busca na yabela Usuario pelo nome
-    ## compara a senha inserida com a senha no banco
-    usuarioNome = data['nome']
-    usuarioSenha = data['senha']
-    usuario = Usuario.query.filter_by(nome=usuarioNome).first()
-    if usuario:
-        if usuario.senha == usuarioSenha:
-            return "Login bem sucedido"
-    
-    return jsonify({'result':'deu certo'})
+
 
 
 # @app.route("/calculo", methods = ['POST'])
