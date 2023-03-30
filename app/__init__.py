@@ -2,9 +2,11 @@ from urllib import response
 from flask import Flask, render_template, request,redirect, url_for, jsonify
 from flask_cors import CORS
 from .models import *
+from flask_bcrypt import Bcrypt ## criptografa a senha do usuario
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
+bcrypt = Bcrypt(app)
 
 if __name__ == '__main__':
     app.debug = True
@@ -109,3 +111,70 @@ def visualizarNotasEquipeSprint():
     todas_sprints = [{'nomealuno':aluno.Usuario.Nome} for aluno in filtro]
          
     return jsonify(todas_sprints)
+
+## Verifica se o usuario esta logado
+@app.route("/@me")
+def get_current_user():
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+    
+    user = Usuario.query.filter_by(idUsuario=user_id).first()
+    return jsonify({
+        "id": user.idUsuario,
+        "nome": user.nome
+    }) 
+
+## Rota para criar um novo usuario
+@app.route("/register", methods=["POST"])
+def register_user():
+    session = Session()
+    nome = request.json["nome"]
+    senha = request.json["senha"]
+    login = request.json["login"]
+
+    user_exists = Usuario.query.filter_by(nome=nome).first() is not None
+    if user_exists:
+        return jsonify({"error": "Usuario já existe"})
+
+    hashed_password = bcrypt.generate_password_hash(senha)
+    new_user = Usuario(nome=nome, senha=hashed_password, login=login)
+    sqlalchemy.session.add(new_user)
+    sqlalchemy.session.commit()
+
+    session["user_id"] = new_user.idUsuario
+
+    return jsonify({
+        "id": new_user.idUsuario,
+        "nome": new_user.nome
+    })
+
+## Rota de login
+@app.route("/login", methods=["POST"] )
+def login_user():
+    nome = request.json["nome"]
+    senha = request.json["senha"]
+    
+
+    user = Usuario.query.filter_by(nome=nome).first()
+    if user is None:
+        return jsonify({"error": "Não autorizado"}), 401
+    
+    if not bcrypt.check_password_hash(user.senha,senha):
+        return jsonify({"error": "Não autorizado"}), 401
+    
+    
+    session["user_id"] = user.idUsuario
+
+    return jsonify({
+        "id": user.idUsuario,
+        "nome": user.nome
+    })
+
+## Rota de logout
+@app.route("/logout", methods=["POST"])
+def logout_user():
+    session = Session()
+    session.pop("user_id")
+    return "200"
