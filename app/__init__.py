@@ -2,6 +2,7 @@ from urllib import response
 from flask import Flask, render_template, request,redirect, url_for, jsonify
 from flask_cors import CORS
 from .models import *
+from sqlalchemy import create_engine, Column, Integer, String, func
 
 app = Flask(__name__)
 CORS(app)
@@ -65,10 +66,10 @@ def calcular():
 
 @app.route("/obterSprintSemestreAno",methods = ['GET'])
 def obterSprintSemestreAno():
-    data = request.get_json()
+    
 
     session = Session()
-    sprintsFiltradas =  session.query(Sprint).filter_by(Semestre = data['semestre'], Ano = data['ano']).all()
+    sprintsFiltradas =  session.query(Sprint).filter_by(Semestre = request.args.get('semestre'), Ano = request.args.get('ano')).all()
     
     todas_sprints = [{'idsprint':sprintFiltrada.IdSprint,'ano':sprintFiltrada.Ano,'semestre':sprintFiltrada.Semestre,'descricao':sprintFiltrada.Descricao} for sprintFiltrada in sprintsFiltradas]
          
@@ -96,16 +97,33 @@ def obterTodasSprints():
 
 @app.route("/visualizarNotasEquipeSprint",methods = ['GET'])
 def visualizarNotasEquipeSprint():
-    data = request.get_json()
     session = Session()
-    filtro = session.query(UsuarioPacer,UsuarioEquipe,Usuario)\
+    # filtro = session.query(UsuarioPacer,UsuarioEquipe,Usuario)\
+    # .join(Usuario, UsuarioPacer.IdUsuarioAvaliado == Usuario.IdUsuario)\
+    # .join(UsuarioEquipe, Usuario.IdUsuario == UsuarioEquipe.UsuarioId)\
+    # .filter(UsuarioPacer.IdSprint == request.args.get('idsprint'),\
+    #  UsuarioEquipe.EquipeId ==request.args.get('idequipe'))\
+    # .distinct().all()
+
+    filtro = session.query(UsuarioPacer.IdUsuarioAvaliado,UsuarioEquipe,Usuario)\
     .join(Usuario, UsuarioPacer.IdUsuarioAvaliado == Usuario.IdUsuario)\
     .join(UsuarioEquipe, Usuario.IdUsuario == UsuarioEquipe.UsuarioId)\
-    .filter(UsuarioPacer.IdSprint == data['idsprint'], UsuarioEquipe.EquipeId == data['idequipe'])\
-    .all()
+    .filter(UsuarioPacer.IdSprint == request.args.get('idsprint'),\
+     UsuarioEquipe.EquipeId ==request.args.get('idequipe'))\
+    .distinct().all()
+
+
+    #pegar todas as notas por aluno, dar um count
     # filtroEquipeSprint =  session.query(EquipeSprint).filter_by(IdEquipe = data['idequipe'], IdSprint = data['idsprint']).all()
     
     # return print(filtro)
-    todas_sprints = [{'nomealuno':aluno.Usuario.Nome} for aluno in filtro]
-         
-    return jsonify(todas_sprints)
+    # todas_sprints = [{'nomealuno':aluno.Usuario.Nome} for aluno in filtro]
+    for aluno in filtro:
+        # notasAluno = session.query(UsuarioPacer).filter_by(IdUsuarioAvaliado = aluno.Usuario.IdUsuario).all()
+        notasAlunoA = session.query(func.sum(UsuarioPacer.NotaA)).filter_by(IdUsuarioAvaliado = aluno.Usuario.IdUsuario).scalar()
+        qtdNotasA = session.query(func.count(UsuarioPacer.NotaA)).filter_by(IdUsuarioAvaliado = aluno.Usuario.IdUsuario).scalar()
+        total = notasAlunoA/qtdNotasA
+        print(total)
+        # for notasA in notasAluno:
+        #     print(notasA.NotaA)
+    return jsonify('ok')
