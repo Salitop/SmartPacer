@@ -116,13 +116,6 @@ def obterTodasSprints():
 @app.route("/visualizarNotasEquipeSprint",methods = ['GET'])
 def visualizarNotasEquipeSprint():
     session = Session()
-    # filtro = session.query(UsuarioPacer,UsuarioEquipe,Usuario)\
-    # .join(Usuario, UsuarioPacer.IdUsuarioAvaliado == Usuario.IdUsuario)\
-    # .join(UsuarioEquipe, Usuario.IdUsuario == UsuarioEquipe.UsuarioId)\
-    # .filter(UsuarioPacer.IdSprint == request.args.get('idsprint'),\
-    #  UsuarioEquipe.EquipeId ==request.args.get('idequipe'))\
-    # .distinct().all()
-
     filtro = session.query(UsuarioPacer.IdUsuarioAvaliado,UsuarioEquipe,Usuario)\
     .join(Usuario, UsuarioPacer.IdUsuarioAvaliado == Usuario.IdUsuario)\
     .join(UsuarioEquipe, Usuario.IdUsuario == UsuarioEquipe.UsuarioId)\
@@ -130,25 +123,30 @@ def visualizarNotasEquipeSprint():
      UsuarioEquipe.EquipeId ==request.args.get('idequipe'))\
     .distinct().all()
 
-
-    #pegar todas as notas por aluno, dar um count
-    # filtroEquipeSprint =  session.query(EquipeSprint).filter_by(IdEquipe = data['idequipe'], IdSprint = data['idsprint']).all()
-    
-    # return print(filtro)
-    # todas_sprints = [{'nomealuno':aluno.Usuario.Nome} for aluno in filtro]
+    print(filtro)
+    notas_aluno = []
     for aluno in filtro:
         # notasAluno = session.query(UsuarioPacer).filter_by(IdUsuarioAvaliado = aluno.Usuario.IdUsuario).all()
+        notasAlunoP = session.query(func.sum(UsuarioPacer.NotaP)).filter_by(IdUsuarioAvaliado = aluno.Usuario.IdUsuario).scalar()
+        qtdNotasP = session.query(func.count(UsuarioPacer.NotaP)).filter_by(IdUsuarioAvaliado = aluno.Usuario.IdUsuario).scalar()
+        totalP = notasAlunoP/qtdNotasP
+
         notasAlunoA = session.query(func.sum(UsuarioPacer.NotaA)).filter_by(IdUsuarioAvaliado = aluno.Usuario.IdUsuario).scalar()
         qtdNotasA = session.query(func.count(UsuarioPacer.NotaA)).filter_by(IdUsuarioAvaliado = aluno.Usuario.IdUsuario).scalar()
-        total = notasAlunoA/qtdNotasA
-        print(total)
-        # for notasA in notasAluno:
-        #     print(notasA.NotaA)
-    return jsonify('ok')
-    todas_sprints = [{'nomealuno':aluno.Usuario.Nome} for aluno in filtro]
-         
-    return jsonify(todas_sprints)
+        totalA = notasAlunoA/qtdNotasA
 
+        notasAlunoC = session.query(func.sum(UsuarioPacer.NotaC)).filter_by(IdUsuarioAvaliado = aluno.Usuario.IdUsuario).scalar()
+        qtdNotasC = session.query(func.count(UsuarioPacer.NotaC)).filter_by(IdUsuarioAvaliado = aluno.Usuario.IdUsuario).scalar()
+        totalC = notasAlunoC/qtdNotasC
+        
+        notasAlunoER = session.query(func.sum(UsuarioPacer.NotaER)).filter_by(IdUsuarioAvaliado = aluno.Usuario.IdUsuario).scalar()
+        qtdNotasER = session.query(func.count(UsuarioPacer.NotaER)).filter_by(IdUsuarioAvaliado = aluno.Usuario.IdUsuario).scalar()
+        totalER = notasAlunoER/qtdNotasER
+        
+        
+        notas_aluno.append({'nomealuno':aluno.Usuario.Nome, 'mediap':totalP, 'mediaa': totalA,'mediac': totalC,'mediaer':totalER})
+    return jsonify(notas_aluno)
+        
 ## Verifica se o usuario esta logado
 @app.route("/@me")
 def get_current_user():
