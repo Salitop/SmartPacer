@@ -143,8 +143,9 @@ def visualizarNotasEquipeSprint():
         qtdNotasER = session.query(func.count(UsuarioPacer.NotaER)).filter_by(IdUsuarioAvaliado = aluno.Usuario.IdUsuario).scalar()
         totalER = notasAlunoER/qtdNotasER
         
+        mediapacer = (totalA+totalC+totalER+totalP) / 4
         
-        notas_aluno.append({'nomealuno':aluno.Usuario.Nome, 'mediap':totalP, 'mediaa': totalA,'mediac': totalC,'mediaer':totalER})
+        notas_aluno.append({'nomealuno':aluno.Usuario.Nome, 'mediapacer':mediapacer, 'mediap':totalP, 'mediaa': totalA,'mediac': totalC,'mediaer':totalER})
     return jsonify(notas_aluno)
         
 ## Verifica se o usuario esta logado
