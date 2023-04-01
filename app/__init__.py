@@ -86,6 +86,22 @@ def obterTodasEquipes():
          
     return jsonify(todas_equipes)
 
+@app.route("/obterAlunosPorIdEquipe",methods = ['GET'])
+def obterAlunosPorIdEquipe():
+    session = Session()
+
+    filtro = session.query(Usuario, Equipe)\
+        .join(UsuarioEquipe, Usuario.IdUsuario == UsuarioEquipe.UsuarioId)\
+        .join(Equipe, Equipe.IdEquipe == UsuarioEquipe.EquipeId)\
+        .filter(Equipe.IdEquipe == request.args.get('idequipe')).all()
+
+    alunos = []
+
+    for aluno in filtro:
+        alunos.append({'idusuario': aluno[0].IdUsuario, 'nome': aluno[0].Nome})
+         
+    return jsonify(alunos)
+
 @app.route("/obterTodasSprints",methods = ['GET'])
 def obterTodasSprints():
     session = Session()
