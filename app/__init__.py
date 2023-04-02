@@ -44,28 +44,6 @@ def calcular():
          
     return jsonify({'result':'deu certo'})
 
-# @app.route("/calculo", methods = ['POST'])
-# def calcular():
-
-#     data = request.get_json()
-
-#     notaASerCalculadaP = session.query(usuariopacer).filter_by(usuarioAvaliado = data['noticia'],
-#                                                               idSprint = data['idSprint'])
-
-#     qtdnotasP = 
-#     totalp = Sum(notasSprintP) / qtdnotasp
-
-#         qtdnotasA = select count(notasSprintA) where etapa = 1 
-#     totalA = Sum(notasSprintA) / qtdnotasA
-
-#         qtdnotasC = select count(notasSprintC) where etapa = 1 
-#     totalC = Sum(notasSprintC) / qtdnotasC
-
-#         qtdnotasER = select count(notasSprintER) where etapa = 1 
-#     totalER = Sum(notasSprintER) / qtdnotasER
-
-#     return render_template('tela_exibicao')
-
 @app.route("/obterSprintSemestreAno",methods = ['GET'])
 def obterSprintSemestreAno():
     
@@ -147,7 +125,36 @@ def visualizarNotasEquipeSprint():
         
         notas_aluno.append({'nomealuno':aluno.Usuario.Nome, 'mediapacer':mediapacer, 'mediap':totalP, 'mediaa': totalA,'mediac': totalC,'mediaer':totalER})
     return jsonify(notas_aluno)
-        
+
+## Encontra a Equipe pelo IdUsuario
+@app.route('/obterUsuarioPorIdUsuario',methods = ['GET'])
+def obterEquipePorIdUsuario():
+    session = Session()
+
+    equipe = session.query(UsuarioEquipe).filter_by(UsuarioId = request.args.get('idusuario')).first()
+
+    usuarios = session.query(UsuarioEquipe, Usuario)\
+                      .join(Usuario, Usuario.IdUsuario == UsuarioEquipe.UsuarioId)\
+                      .filter(UsuarioEquipe.EquipeId == equipe.EquipeId).all()
+    
+    usuarioList = []
+
+    for usuario in usuarios:
+        usuarioList.append({'id': usuario.Usuario.IdUsuario,'nome': usuario.Usuario.Nome})
+
+
+    return jsonify(usuarioList)
+
+@app.route('/obterValorEquipeSprint',methods = ['GET'])
+def obterValorEquipeSprint():
+    session = Session()
+
+    equipeSprint = session.query(EquipeSprint).filter_by(IdEquipe = request.args.get('idequipe'), IdSprint = request.args.get('idsprint')).first()
+
+    return jsonify({
+        "valorSprint": equipeSprint.PontosPacer
+    })
+
 ## Verifica se o usuario esta logado
 @app.route("/@me")
 def get_current_user():
@@ -189,24 +196,25 @@ def register_user():
 ## Rota de login
 @app.route("/login", methods=["POST"] )
 def login_user():
-    nome = request.json["nome"]
+    sessionQuery = Session()
+    login = request.json["login"]
     senha = request.json["senha"]
-    
 
-    user = Usuario.query.filter_by(nome=nome).first()
+    if login == "professorAdmin" and senha == "fatecprofessor":
+        return jsonify({
+            "login": "professor"
+        })
+
+    user = sessionQuery.query(Usuario).filter_by(Login = login, Senha = senha).first()
     if user is None:
-        return jsonify({"error": "Não autorizado"}), 401
-    
-    if not bcrypt.check_password_hash(user.senha,senha):
-        return jsonify({"error": "Não autorizado"}), 401
-    
-    
-    session["user_id"] = user.idUsuario
-
-    return jsonify({
-        "id": user.idUsuario,
-        "nome": user.nome
-    })
+        return jsonify({"error": "Usuario não encontrado"}), 401
+    else:
+        # session["user_id"] = user.IdUsuario
+        return jsonify({
+            "id": user.IdUsuario,
+            "login": user.Login,
+            "nome": user.Nome
+        })
 
 ## Rota de logout
 @app.route("/logout", methods=["POST"])
