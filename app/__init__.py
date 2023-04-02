@@ -140,7 +140,9 @@ def obterEquipePorIdUsuario():
     usuarioList = []
 
     for usuario in usuarios:
-        usuarioList.append({'id': usuario.Usuario.IdUsuario,'nome': usuario.Usuario.Nome})
+        usuarioList.append({'id': usuario.Usuario.IdUsuario,
+                            'nome': usuario.Usuario.Nome,
+                            'idEquipe': equipe.EquipeId})
 
 
     return jsonify(usuarioList)
