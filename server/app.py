@@ -28,7 +28,8 @@ def get_current_user():
     user = Usuario.query.filter_by(idUsuario=user_id).first()
     return jsonify({
         "id": user.idUsuario,
-        "nome": user.nome
+        "nome": user.nome,
+       
     }) 
 
 
@@ -53,6 +54,7 @@ def register_user():
         "id": new_user.idUsuario,
         "nome": new_user.nome
     })
+    
 
 @app.route("/login", methods=["POST"] )
 def login_user():
@@ -72,7 +74,8 @@ def login_user():
 
     return jsonify({
         "id": user.idUsuario,
-        "nome": user.nome
+        "nome": user.nome,
+        
     })
 
 @app.route("/logout", methods=["POST"])
