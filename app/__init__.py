@@ -64,6 +64,8 @@ def obterTodasEquipes():
          
     return jsonify(todas_equipes)
 
+    
+
 @app.route("/obterAlunosPorIdEquipe",methods = ['GET'])
 def obterAlunosPorIdEquipe():
     session = Session()
@@ -146,6 +148,27 @@ def obterEquipePorIdUsuario():
 
 
     return jsonify(usuarioList)
+
+@app.route('/obterUsuarioAndEquipe',methods = ['GET'])
+def obterEquipePorIdUsuario():
+    session = Session()
+
+    equipe = session.query(UsuarioEquipe).all()
+
+    usuarios = session.query(UsuarioEquipe, Usuario)\
+                      .join(Usuario, Usuario.IdUsuario == UsuarioEquipe.UsuarioId)\
+                      .filter(UsuarioEquipe.EquipeId == equipe.EquipeId).all()
+    
+    usuarioList = []
+
+    for usuario in usuarios:
+        usuarioList.append({'id': usuario.Usuario.IdUsuario,
+                            'nome': usuario.Usuario.Nome,
+                            'idEquipe': equipe.EquipeId,
+                            'nomeEquipe': equipe.NomeEquipe})
+
+
+    return jsonify(usuarioList)    
 
 @app.route('/obterValorEquipeSprint',methods = ['GET'])
 def obterValorEquipeSprint():
