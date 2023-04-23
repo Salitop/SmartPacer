@@ -228,3 +228,30 @@ def logout_user():
     session = Session()
     session.pop("user_id")
     return "200"
+
+@app.route("/obterPontosRestantes",methods = ['GET'])
+def obterPontosRestantes():
+    session = Session()
+
+    notasAlunoP = session.query(func.sum(UsuarioPacer.NotaP))\
+    .filter_by(IdUsuario = request.args.get('idusuario'),\
+    IdSprint = request.args.get('idsprint')).scalar()
+
+    notasAlunoA = session.query(func.sum(UsuarioPacer.NotaA))\
+    .filter_by(IdUsuario = request.args.get('idusuario'),\
+    IdSprint = request.args.get('idsprint')).scalar()
+
+    notasAlunoC = session.query(func.sum(UsuarioPacer.NotaC))\
+    .filter_by(IdUsuario = request.args.get('idusuario'),\
+    IdSprint = request.args.get('idsprint')).scalar()
+
+    notasAlunoER = session.query(func.sum(UsuarioPacer.NotaER))\
+    .filter_by(IdUsuario = request.args.get('idusuario'),\
+    IdSprint = request.args.get('idsprint')).scalar()
+
+    totalPontosEquipe = session.query(EquipeSprint).filter_by(IdEquipe = request.args.get('idequipe')).first()
+   
+    return jsonify({'pontos_restantes':((totalPontosEquipe.PontosPacer) - (notasAlunoA +\
+                                                                           notasAlunoC +\
+                                                                           notasAlunoP +\
+                                                                           notasAlunoER))})
