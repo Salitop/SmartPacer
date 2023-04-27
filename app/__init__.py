@@ -150,7 +150,7 @@ def obterEquipePorIdUsuario():
     return jsonify(usuarioList)
 
 @app.route('/obterUsuarioAndEquipe',methods = ['GET'])
-def obterEquipePorIdUsuario():
+def obterUsuarioAndEquipe():
     session = Session()
 
     equipe = session.query(UsuarioEquipe).all()
