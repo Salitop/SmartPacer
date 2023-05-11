@@ -154,7 +154,7 @@ def obterEquipePorIdUsuario():
     return jsonify(usuarioList)
 
 @app.route('/obterUsuarioAndEquipe',methods = ['GET'])
-def obterEquipePorIdUsuario():
+def obterEquipePorIdUsuario2(): ## modifiquei o nome da função pois estava dando erro
     session = Session()
 
     equipe = session.query(UsuarioEquipe).all()
