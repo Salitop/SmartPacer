@@ -223,7 +223,7 @@ def login_user():
     login = request.json["login"]
     senha = request.json["senha"]
 
-    if login == "professorAdmin" and senha == "fatecprofessor":
+    if login == "prof" and senha == "fatec":
         return jsonify({
             "login": "professor"
         })
