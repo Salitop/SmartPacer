@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 # Cria a engine para se conectar ao banco de dados
 # engine = sqlalchemy.create_engine('mysql://root:ZvFRi8OvrgkD8zUW2IzH@containers-us-west-153.railway.app:5839/railway')
-engine = sqlalchemy.create_engine("mysql+mysqldb://root:password@localhost:3306/SmartPacer")
+engine = sqlalchemy.create_engine("mysql+mysqldb://root:user123@localhost:3306/SmartPacer")
 
 Session = sqlalchemy.orm.sessionmaker()
 Session.configure(bind=engine)
