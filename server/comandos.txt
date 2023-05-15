@@ -1,0 +1,10 @@
+No terminal ou no gitbash executar os seguintes comandos
+- git clone "https://github.com/Salitop/SmartPacer.git"
+acessar o diretorio
+- git checkout feature/logica-de-login
+- cd server
+- virtualenv venv
+- .\venv\Scripts\activate
+- python app.py
+
+PS: executar primeiro o backend
