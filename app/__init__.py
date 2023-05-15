@@ -154,22 +154,20 @@ def obterEquipePorIdUsuario():
     return jsonify(usuarioList)
 
 @app.route('/obterUsuarioAndEquipe',methods = ['GET'])
-def obterEquipePorIdUsuario():
+def obterUsuarioAndEquipe():
     session = Session()
 
-    equipe = session.query(UsuarioEquipe).all()
-
-    usuarios = session.query(UsuarioEquipe, Usuario)\
+    usuarios = session.query(UsuarioEquipe, Usuario, Equipe)\
                       .join(Usuario, Usuario.IdUsuario == UsuarioEquipe.UsuarioId)\
-                      .filter(UsuarioEquipe.EquipeId == equipe.EquipeId).all()
+                      .filter(UsuarioEquipe.EquipeId == Equipe.IdEquipe).all()
     
     usuarioList = []
 
     for usuario in usuarios:
         usuarioList.append({'id': usuario.Usuario.IdUsuario,
                             'nome': usuario.Usuario.Nome,
-                            'idEquipe': equipe.EquipeId,
-                            'nomeEquipe': equipe.NomeEquipe})
+                            'idEquipe': usuario.Equipe.IdEquipe,
+                            'nomeEquipe': usuario.Equipe.NomeEquipe})
 
 
     return jsonify(usuarioList)    
@@ -229,7 +227,7 @@ def login_user():
     login = request.json["login"]
     senha = request.json["senha"]
 
-    if login == "professorAdmin" and senha == "fatecprofessor":
+    if login == "prof" and senha == "fatec":
         return jsonify({
             "login": "professor"
         })
