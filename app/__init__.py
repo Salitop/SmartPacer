@@ -5,6 +5,8 @@ from .models import *
 from flask_bcrypt import Bcrypt ## criptografa a senha do usuario
 from sqlalchemy import create_engine, Column, Integer, String, func
 
+
+
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
 bcrypt = Bcrypt(app)
@@ -12,6 +14,8 @@ bcrypt = Bcrypt(app)
 if __name__ == '__main__':
     app.debug = True
     app.run()
+
+bcrypt = Bcrypt(app)
 
 @app.route("/")
 def index():
