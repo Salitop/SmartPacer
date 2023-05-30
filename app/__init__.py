@@ -1,4 +1,4 @@
-from urllib import response
+from urllib import responseTrue
 from flask import Flask, render_template, request,redirect, url_for, jsonify
 from flask_cors import CORS
 from .models import *
@@ -77,7 +77,7 @@ def obterAlunosPorIdEquipe():
     filtro = session.query(Usuario, Equipe)\
         .join(UsuarioEquipe, Usuario.IdUsuario == UsuarioEquipe.UsuarioId)\
         .join(Equipe, Equipe.IdEquipe == UsuarioEquipe.EquipeId)\
-        .filter(Equipe.IdEquipe == request.args.get('idequipe')).all()
+        .filter(Equipe.IdEquipe == request.args.get('idequipe'), UsuarioEquipe.Ativo == 1).all()
 
     alunos = []
 
@@ -137,11 +137,11 @@ def visualizarNotasEquipeSprint():
 def obterEquipePorIdUsuario():
     session = Session()
 
-    equipe = session.query(UsuarioEquipe).filter_by(UsuarioId = request.args.get('idusuario')).first()
+    equipe = session.query(UsuarioEquipe).filter_by(UsuarioId = request.args.get('idusuario'), Ativo = 1).first()
 
     usuarios = session.query(UsuarioEquipe, Usuario)\
                       .join(Usuario, Usuario.IdUsuario == UsuarioEquipe.UsuarioId)\
-                      .filter(UsuarioEquipe.EquipeId == equipe.EquipeId).all()
+                      .filter(UsuarioEquipe.EquipeId == equipe.EquipeId, UsuarioEquipe.Ativo == 1).all()
     
     usuarioList = []
 
@@ -159,7 +159,7 @@ def obterUsuarioAndEquipe():
 
     usuarios = session.query(UsuarioEquipe, Usuario, Equipe)\
                       .join(Usuario, Usuario.IdUsuario == UsuarioEquipe.UsuarioId)\
-                      .filter(UsuarioEquipe.EquipeId == Equipe.IdEquipe).all()
+                      .filter(UsuarioEquipe.EquipeId == Equipe.IdEquipe, UsuarioEquipe.Ativo == 1).all()
     
     usuarioList = []
 
